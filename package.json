@@ -1,0 +1,46 @@
+{
+  "name": "markdown-it-image-lightbox",
+  "version": "0.0.1",
+  "description": "markdown-it image lightbox plugin",
+  "main": "dist/index.js",
+  "module": "src/index.js",
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "webpack --mode production",
+    "dev": "webpack --mode development --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "markdown-it",
+    "markdown-it-plugin",
+    "image",
+    "image-lightbox"
+  ],
+  "author": "mgboy111@gmail.com",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/luckycucu/markdown-it-image-lightbox"
+  },
+  "bugs": {
+    "url": "https://github.com/luckycucu/markdown-it-image-lightbox/issues"
+  },
+  "homepage": "https://github.com/luckycucu/markdown-it-image-lightbox#readme",
+  "peerDependencies": {
+    "markdown-it": "^14.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.5",
+    "@babel/preset-env": "^7.28.5",
+    "babel-loader": "^10.0.0",
+    "webpack": "^5.103.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "jsdom": "^27.2.0"
+  }
+}
