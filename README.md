@@ -55,4 +55,4 @@ const result = md.render('![alt text](image.jpg)');
 
 **mode=2，灯箱图片不存在关闭按钮，左击鼠标会关闭灯箱，图片会尽可能占满页面**
 
-![image-20251125220520680](image\README\image-20251125220520680.png)
+![image-20251125220520680](image/README/image-20251125220520680.png)

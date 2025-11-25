@@ -51,4 +51,4 @@ const result = md.render('![alt text](image.jpg)');
 
 **mode=2. The lightbox does not have a close button; clicking the left mouse button closes the lightbox. The image will fill the page as much as possible.**
 
-![image-20251125220520680](image\README\image-20251125220520680.png)
+![image-20251125220520680](image/README/image-20251125220520680.png)
