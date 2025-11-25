@@ -1,9 +1,10 @@
 {
   "name": "markdown-it-image-lightbox",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "markdown-it image lightbox plugin",
   "main": "dist/index.js",
   "module": "src/index.js",
+  "types": "src/index.d.ts",
   "files": [
     "dist",
     "src",
