@@ -10,6 +10,8 @@ export default function imageLightboxPlugin(md, options = {
     enableLightbox: true,
     imageClass: "markdown-it-image-lightbox-plugin",
     imageRadius: "",
+    imageMaxWidth: "",
+    imageMaxHeight: "",
     referrerpolicy: false,
     showCaption: true
 }) {

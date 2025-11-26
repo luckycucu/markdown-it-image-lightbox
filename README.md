@@ -3,9 +3,7 @@
 <a href="README_EN.md">English</a>
 </p>
 
-markdown-it-image-lightbox 插件，可以让markdown-it渲染的 Markdown 图片具备**灯箱（Lightbox）功能**。
-
-该插件能让渲染后的 Markdown 图片在点击时以全屏或弹窗形式放大显示。当页面布局限制了图片完整展示时，也能提供清晰的放大预览体验。
+**markdown-it-image-lightbox** 是一款为 markdown-it 渲染的图片添加**灯箱（Lightbox）功能**的插件。启用后，用户点击 Markdown 图片即可在弹窗中全屏查看高清大图，有效解决因布局压缩导致的图像细节模糊、不可见问题。
 
 ## 安装
 
@@ -27,8 +25,10 @@ md.use(imageLightbox, {
   enableLightbox: true,        // 启用灯箱功能
   imageClass: 'my-custom-class', // 设置正文图片的 CSS 类名
   imageRadius: '8px',          // 设置正文图片的圆角大小
+  imageMaxWidth: "100vh",      // 设置正文图片的最大宽度
+  imageMaxHeight: "70vh",      // 设置正文图片的最大高度
+  showCaption: true            // 设置正文图片是否显示标题
   referrerpolicy: false,       // 是否设置 referrerpolicy="no-referrer"
-  showCaption: true            // 是否显示图片标题（使用 alt 文本）
 });
 
 const result = md.render('![alt text](image.jpg)');
@@ -37,15 +37,17 @@ const result = md.render('![alt text](image.jpg)');
 
 **配置选项**
 
-| 选项               | 类型        | 默认值                                  | 说明                                                                                                                                     |
-| ------------------ | ----------- | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| mode | number | 1 | 灯箱样式，目前存在两种样式。具体可以看样例。 |
+| 选项           | 类型    | 默认值                              | 说明                                                                                                                                     |
+| -------------- | ------- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| mode           | number  | 1                                   | 灯箱样式，目前存在两种样式。具体可以看样例。                                                                                             |
 | lazyLoading    | boolean | true                                | 是否启用图片懒加载，提升页面初始加载速度。                                                                                               |
-| enableLightbox | boolean | true                                | 是否启用灯箱功能（点击放大）。                                                    |
-| imageClass     | string  | "markdown-it-image-lightbox-plugin" | 设置正文图片的 CSS 类名，便于样式隔离或定制。                                                                       |
-| imageRadius | string | "" | 设置正文图片的圆角大小，如 "10px"。 |
-| referrerpolicy | boolean | false                              | 若为 `true`，则为 `<img>` 添加 `referrerpolicy="no-referrer"`，防止来源 URL 泄露，有助于绕过部分防盗链策略（请确保合法合规使用）。 |
-| showCaption    | boolean | true                                | 是否在灯箱中显示图片标题（取自 Markdown 中的 `alt` 文本）。                                                                            |
+| enableLightbox | boolean | true                                | 是否启用灯箱功能（点击放大）。                                                                                                           |
+| imageClass     | string  | "markdown-it-image-lightbox-plugin" | 设置正文图片的 CSS 类名，便于样式隔离或定制。                                                                                            |
+| imageRadius    | string  | ""                                  | 设置正文图片的圆角大小，如 "10px"。                                                                                                      |
+| imageMaxWidth  | string  | "100vh"                             | 设置正文图片的最大宽度，如"100vh", "500px"。                                                                                             |
+| imageMaxHeight | string  | "60vh"                              | 设置正文图片的最大高度，如"60vh"，"600px"。                                                                                              |
+| showCaption    | boolean | true                                | 设置正文图片是否显示标题（取自 Markdown 中的 `alt` 文本）。                                                                            |
+| referrerpolicy | boolean | false                               | 若为 `true`，则为 `<img>` 添加 `referrerpolicy="no-referrer"`，防止来源 URL 泄露，有助于绕过部分防盗链策略（请确保合法合规使用）。 |
 
 ## 样例
 

@@ -427,19 +427,45 @@ animation: markdownLightboxFadeIn 0.3s ease !important;
     }
 }
 // 生成主文档的CSS样式（包含图片和标题样式）
-const generateMainStyles = (imageClass = 'markdown-it-image-lightbox-plugin', imageRadius = "") => {
+const generateMainStyles = (
+    imageClass = 'markdown-it-image-lightbox-plugin', 
+    imageRadius = "", 
+    imageMaxWidth= "", 
+    imageMaxHeight= ""
+) => {
     const styleId = `${imageClass}-main-styles`;
 
     if (typeof document === 'undefined' || document.getElementById(styleId)) return;
     if (imageRadius.length > 0) {
         imageRadius = `border-radius: ${imageRadius};`
-    } 
+    }
+    if (imageMaxWidth.length > 0) {
+        imageMaxWidth = `max-width: ${imageMaxWidth};`
+    } else {
+        imageMaxWidth = `max-width: 100vh;`
+    }
+    if (imageMaxHeight.length > 0) {
+        imageMaxHeight = `max-height: ${imageMaxHeight};`
+    } else {
+        imageMaxHeight = `max-height: 60vh;`
+    }
     const styles = `
+/* 图片容器样式 */
+.${imageClass}-container {
+display: flex;
+flex-direction: column;
+align-items: center;
+margin: 16px 0;
+max-width: 100%;
+}
+
+/* 图片 */
 .${imageClass} {
-  cursor: zoom-in !important;
-  max-width: 100% !important;
-  height: auto !important;
-  transition: all 0.3s ease !important;
+  cursor: zoom-in;
+  ${imageMaxWidth}
+  ${imageMaxHeight}
+  height: auto;
+  transition: all 0.3s ease;
   ${imageRadius}
   display: block;
   margin: 0 auto;
@@ -458,15 +484,6 @@ background: #f8f9fa;
 padding: 5px;
 border: 1px solid #e9ecef;
 ${imageRadius}
-}
-
-/* 图片容器样式 */
-.${imageClass}-container {
-display: flex;
-flex-direction: column;
-align-items: center;
-margin: 16px 0;
-max-width: 100%;
 }
 
 /* 图片标题样式 */
@@ -503,6 +520,8 @@ const mdImageLightboxMode1 =  (options = {}) => {
         referrerpolicy = false,
         showCaption = true,
         imageRadius = "",
+        imageMaxWidth = "",
+        imageMaxHeight = ""
     } = options;
 
     const lightboxManager = new LightboxManager({ imageClass, referrerpolicy });
@@ -519,7 +538,7 @@ const mdImageLightboxMode1 =  (options = {}) => {
     return (md) => {
         // 在主文档中注入必要的图片样式
         if (typeof document !== 'undefined') {
-            generateMainStyles(imageClass, imageRadius);
+            generateMainStyles(imageClass, imageRadius, imageMaxWidth, imageMaxHeight);
         }
 
         const defaultRender = md.renderer.rules.image;

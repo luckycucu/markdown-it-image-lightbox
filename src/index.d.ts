@@ -9,6 +9,8 @@ declare module 'markdown-it-image-lightbox' {
     enableLightbox?: boolean;
     imageClass?: string;
     imageRadius?: string;
+    imageMaxWidth?: string,
+    imageMaxHeight?: string,
     referrerpolicy?: boolean;
     showCaption?: boolean;
   }
