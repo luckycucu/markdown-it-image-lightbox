@@ -5,6 +5,13 @@ class LightboxManager {
         this.imageClass = options.imageClass || "markdown-it-image-lightbox-plugin";
         this.referrerpolicy = options.referrerpolicy || false;
         this.shadowRoot = null;
+
+        // 全局 ESC 关闭处理（只绑定一次）
+        this.globalKeyHandler = (e) => {
+            if (e.key === 'Escape' && this.lightbox && this.lightbox.style.display !== 'none') {
+                this.hideLightbox();
+            }
+        };
     }
 
     init() {
@@ -16,6 +23,9 @@ class LightboxManager {
             this.handleImageClick(imgElement);
         };
 
+        // 绑定 ESC 全局监听（仅一次）
+        document.addEventListener('keydown', this.globalKeyHandler);
+
         this.isInitialized = true;
     }
 
@@ -24,20 +34,16 @@ class LightboxManager {
         const shadowHost = document.createElement('div');
         shadowHost.id = `${this.imageClass}-shadow-host`;
         shadowHost.style.cssText = `
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 10000;
-    pointer-events: none;
-  `;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            pointer-events: none;
+        `;
         document.body.appendChild(shadowHost);
-
-        // 创建 Shadow Root
         this.shadowRoot = shadowHost.attachShadow({ mode: 'open' });
-
-        // 注入样式到 Shadow DOM
         this.injectStylesToShadowDOM();
     }
 
@@ -195,8 +201,8 @@ animation: markdownLightboxFadeIn 0.3s ease !important;
 
     handleImageClick(imgElement) {
         // 获取图片容器，如果存在标题，则从容器中获取标题
-        let alt = imgElement.getAttribute('data-alt');
-        const src = imgElement.getAttribute('data-src');
+        const alt = imgElement.getAttribute('data-alt') || '';
+        const src = imgElement.getAttribute('data-src') || imgElement.src;
         this.showLightbox(src, alt);
     }
 
@@ -205,15 +211,14 @@ animation: markdownLightboxFadeIn 0.3s ease !important;
             this.createShadowContainer();
         }
 
-        let lightbox = this.shadowRoot.querySelector('.markdown-lightbox');
-
-        if (!lightbox) {
-            lightbox = this.createLightbox(src, alt);
-            this.shadowRoot.appendChild(lightbox);
-            this.bindLightboxEvents(lightbox);
-        } else {
-            this.updateLightbox(lightbox, src, alt);
+        // 总是创建全新的 lightbox
+        if (this.lightbox) {
+            this.lightbox.remove();
         }
+
+        const lightbox = this.createLightbox(src, alt);
+        this.shadowRoot.appendChild(lightbox);
+        this.bindLightboxEvents(lightbox);
 
         this.lightbox = lightbox;
         document.body.style.overflow = 'hidden';
@@ -226,18 +231,13 @@ animation: markdownLightboxFadeIn 0.3s ease !important;
     }
 
     createLightbox(src, alt) {
+        // svg
+        const isSVG = this.isSVGImage(src);
+        const svgClass = isSVG ? ' lightbox-svg-image' : '';
+        const referrerpolicyAttr = this.referrerpolicy ? 'referrerpolicy="no-referrer"' : '';
+        
         const lightbox = document.createElement('div');
         lightbox.className = 'markdown-lightbox';
-
-        // 检测是否为 SVG 图片
-        const isSVG = this.isSVGImage(src);
-
-        // 构建灯箱图片的HTML，包含referrerpolicy属性
-        const referrerpolicyAttr = this.referrerpolicy ? 'referrerpolicy="no-referrer"' : '';
-
-        // 为 SVG 添加特殊类
-        const svgClass = isSVG ? ' lightbox-svg-image' : '';
-
         lightbox.innerHTML = `
     <div class="lightbox-backdrop"></div>
     <div class="lightbox-content">
@@ -267,16 +267,6 @@ animation: markdownLightboxFadeIn 0.3s ease !important;
         backdrop.addEventListener('click', closeHandler);
         closeBtn.addEventListener('click', closeHandler);
 
-        // ESC 键关闭
-        const keyHandler = (e) => {
-            if (e.key === 'Escape') {
-                this.hideLightbox();
-            }
-        };
-
-        document.addEventListener('keydown', keyHandler);
-        this.currentKeyHandler = keyHandler;
-
         // SVG 图片加载后的特殊处理
         const img = lightbox.querySelector('.lightbox-image');
         if (this.isSVGImage(img.src)) {
@@ -284,7 +274,7 @@ animation: markdownLightboxFadeIn 0.3s ease !important;
         }
     }
 
-    // 处理 SVG 图片
+    // 处理 SVG 图片显示尺寸
     handleSVGImage(imgElement) {
         // 确保 SVG 图片能够正确缩放
         imgElement.onload = () => {
@@ -350,57 +340,12 @@ animation: markdownLightboxFadeIn 0.3s ease !important;
         }
     }
 
-    updateLightbox(lightbox, src, alt) {
-        const img = lightbox.querySelector('.lightbox-image');
-        const caption = lightbox.querySelector('.lightbox-caption');
-
-        img.src = src;
-        img.alt = alt;
-
-        // 更新时也设置referrerpolicy
-        if (this.referrerpolicy) {
-            img.setAttribute('referrerpolicy', 'no-referrer');
-        } else {
-            img.removeAttribute('referrerpolicy');
-        }
-
-        // 更新 SVG 相关样式
-        if (this.isSVGImage(src)) {
-            img.classList.add('lightbox-svg-image');
-            this.handleSVGImage(img);
-        } else {
-            img.classList.remove('lightbox-svg-image');
-            img.style.background = '';
-            img.style.padding = '';
-        }
-
-        if (caption) {
-            caption.textContent = alt || '';
-        } else if (alt) {
-            // 如果之前没有caption但现在有alt，创建caption
-            const content = lightbox.querySelector('.lightbox-content');
-            const newCaption = document.createElement('div');
-            newCaption.className = 'lightbox-caption';
-            newCaption.textContent = alt;
-            content.appendChild(newCaption);
-        }
-
-        lightbox.style.display = 'flex';
-    }
-
     hideLightbox() {
         if (this.lightbox) {
             this.lightbox.style.display = 'none';
         }
 
-        // 移除键盘事件监听
-        if (this.currentKeyHandler) {
-            document.removeEventListener('keydown', this.currentKeyHandler);
-            this.currentKeyHandler = null;
-        }
-
         document.body.style.overflow = '';
-
         // 禁用宿主元素的指针事件
         const shadowHost = document.getElementById(`${this.imageClass}-shadow-host`);
         if (shadowHost) {
@@ -415,18 +360,17 @@ animation: markdownLightboxFadeIn 0.3s ease !important;
         }
 
         // 移除键盘事件监听
-        if (this.currentKeyHandler) {
-            document.removeEventListener('keydown', this.currentKeyHandler);
-            this.currentKeyHandler = null;
-        }
-
+        document.removeEventListener('keydown', this.globalKeyHandler);
         delete window.markdownImageClick;
+
         this.isInitialized = false;
         this.lightbox = null;
         this.shadowRoot = null;
     }
 }
-// 生成主文档的CSS样式（包含图片和标题样式）
+
+
+// 生成正文图片样式
 const generateMainStyles = (
     imageClass = 'markdown-it-image-lightbox-plugin', 
     imageRadius = "", 

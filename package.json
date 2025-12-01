@@ -1,6 +1,6 @@
 {
   "name": "markdown-it-image-lightbox",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "markdown-it image lightbox plugin",
   "main": "dist/index.js",
   "module": "src/index.js",
@@ -40,8 +40,5 @@
     "babel-loader": "^10.0.0",
     "webpack": "^5.103.0",
     "webpack-cli": "^5.1.4"
-  },
-  "dependencies": {
-    "jsdom": "^27.2.0"
   }
 }
